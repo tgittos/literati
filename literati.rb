@@ -11,14 +11,14 @@ in_section = false
 
 lines.each_with_index do |line, i|
   # find blocks of docs + code
-  if line =~ /^[=]+$/
+  if line =~ /^==\s([^=]*)\s?==$/
     if !in_section
       # start of header
-      section_list << { :start => i - 1 }
+      section_list << { :start => i }
       in_section = true
     else
       # start of next header/end of section
-      section_list.last[:end] = i - 2
+      section_list.last[:end] = i - 1
       in_section = false
     end
   end
@@ -44,18 +44,22 @@ section_list.each do |section|
           section[:pc] = true if line =~ /pc/
           in_comment = false
           in_code = true
+        elsif line.strip.empty?
+          in_code = true
         else
           section[:comment] = "" if section[:comment].nil?
           section[:comment] << line
         end
       else
       end
-      if line =~ /^[=]+$/
-        section[:identifier] = lines[index - 1].gsub /\n/, ''
+      if line =~ /^==\s([^=]*)\s?==$/
+        section[:identifier] = lines[index].gsub /\n/, ''
         in_comment = true
       end
     end
   end
 end
 
-puts section_list.first.inspect
+section_list.each do |section|
+  puts section.inspect
+end

@@ -1,5 +1,4 @@
-Calculator
-----------
+== Calculator ==
 This is a simple, command line calculator. It's purpose is to outline
 how a literati document looks, and allow you to run tangle/weave on it
 and observe the output.
@@ -21,8 +20,7 @@ This will neeed it's own annotation too.
 The documentation should output markdown.
 The format of the code produced should be given.
 
-Ask for a number
-================
+== Ask for a number ==
 We need input for the calculator from the user, so we ask them for it.
 If the user enters a non-numeric number, reprompt them to enter a proper number.
 The user can enter 'q' to quit the program
@@ -37,14 +35,12 @@ def ask_for_a_number
   end
 end
 
-Quit the app
-============
+== Quit the app ==
   
 puts 'Thank you for using the calculator.'
 return
 
-Store 2 numbers
-===============
+== Store 2 numbers ==
 
 a = ask_for_a_number
 if a == 'q'
@@ -55,8 +51,7 @@ if b == 'q'
   Quit the app.
 end
 
-Select an operator
-==================
+== Select an operator ==
 Because we don't want to start executing arbirary strings entered by the user,
 we allow them to perform a small subset of mathematical operations through
 this calculator.
@@ -74,13 +69,11 @@ def select_an_operator
   return operator
 end
 
-Store the operator
-==================
+== Store the operator ==
 
 op = select_an_operator
 
-Quit if user wants
-==================
+== Quit if user wants ==
 If the user has entered 'q' as their operator, then quit the program
 
 if op == 'q'
@@ -88,8 +81,7 @@ if op == 'q'
 end
 
 
-Perform the calculation
-=======================
+== Perform the calculation ==
 @ api, pc
 
 def perform_calculation(op, a, b)
@@ -105,20 +97,17 @@ def perform_calculation(op, a, b)
   end
 end
 
-Store the result
-================
+== Store the result ==
 
 result = perform_calculation op, a, b
 
-Print the result
-================
+== Print the result ==
 @api, pc
 
 puts 'The output of your calculation is: '
 puts result
 
-@ calculator.rb
----------------
+== @calculator.rb ==
 Ask for a number.
 Store 2 numbers.
 Select an operator.
