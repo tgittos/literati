@@ -20,6 +20,10 @@ This will neeed it's own annotation too.
 The documentation should output markdown.
 The format of the code produced should be given.
 
+== Shebang ==
+
+#! /usr/bin/env ruby
+
 == Ask for a number ==
 We need input for the calculator from the user, so we ask them for it.
 If the user enters a non-numeric number, reprompt them to enter a proper number.
@@ -28,17 +32,18 @@ The user can enter 'q' to quit the program
 
 def ask_for_a_number
   number = nil
-  while !number.nil? && number != 'q'
+  while number.nil?
     puts 'Please enter a number: '
-    number = gets
+    number = gets.gsub(/\n/, '')
     number = nil? if !(number =~ /[\dq]*/)
   end
+  number
 end
 
 == Quit the app ==
   
 puts 'Thank you for using the calculator.'
-return
+exit
 
 == Store 2 numbers ==
 
@@ -61,10 +66,10 @@ Let them quit by passing in q
 
 def select_an_operator
   operator = nil
-  while !operator.nil? && operator != 'q'
+  while operator.nil?
     puts 'Please select an operator (+-*/), q to quit: '
-    operator = gets
-    operator = nil if not '+-*/q'.include? operator
+    operator = gets.gsub(/\n/, '')
+    operator = nil unless ['+', '-', '*', '/', 'q'].include?(operator)
   end
   return operator
 end
@@ -85,7 +90,9 @@ end
 @ api, pc
 
 def perform_calculation(op, a, b)
-  select op do
+  a = Integer(a)
+  b = Integer(b)
+  case op
     when "+"
       a + b
     when "-"
@@ -99,6 +106,7 @@ end
 
 == Store the result ==
 
+puts "Performing #{a} #{op} #{b}"
 result = perform_calculation op, a, b
 
 == Print the result ==
@@ -108,6 +116,7 @@ puts 'The output of your calculation is: '
 puts result
 
 == @calculator.rb ==
+Shebang.
 Ask for a number.
 Store 2 numbers.
 Select an operator.
