@@ -13,9 +13,8 @@ def get_code_for section_list, identifier
   identifier.chomp! '.'
   section_list.each do |section|
     if section[:identifier] == identifier
-      # TODO: Do this search recursively so that we can follow a chain 
-      #nested_result = get_code_for section[:code]
-      #return nested_result unless nested_result.nil?
+      nested_result = get_code_for section_list, section[:code]
+      return nested_result unless nested_result.nil?
       return section[:code]
     end
   end
