@@ -1,0 +1,13 @@
+class Comment
+
+  @api = true
+  @doc = true
+  @comment = ""
+
+  def initialize(comment, api = true, doc = true)
+    self.comment = comment;
+    self.api = api
+    self.doc = doc
+  end
+
+end

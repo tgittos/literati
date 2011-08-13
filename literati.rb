@@ -1,9 +1,5 @@
 #! /usr/bin/env ruby
 
-# TODO:
-# PRESERVE WHITESPACE, BREAKS LANGUAGES THAT DEPEND ON WHITESPACE
-# *COUGHPYTHONCOUGH*
-
 section_list = []
 in_section = false
 
