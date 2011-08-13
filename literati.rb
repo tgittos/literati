@@ -1,5 +1,9 @@
 #! /usr/bin/env ruby
 
+# TODO:
+# PRESERVE WHITESPACE, BREAKS LANGUAGES THAT DEPEND ON WHITESPACE
+# *COUGHPYTHONCOUGH*
+
 section_list = []
 in_section = false
 
@@ -13,9 +17,15 @@ def get_code_for section_list, identifier
   identifier.chomp! '.'
   section_list.each do |section|
     if section[:identifier] == identifier
-      nested_result = get_code_for section_list, section[:code]
-      return nested_result unless nested_result.nil?
-      return section[:code]
+      #puts "found #{identifier}"
+      # code is an array of lines
+      nested_result = []
+      section[:code].each do |line|
+        code_for_nested = get_code_for section_list, line
+        nested_result << code_for_nested unless code_for_nested.nil?
+        nested_result << line if code_for_nested.nil?
+      end
+      return nested_result
     end
   end
   nil
@@ -84,13 +94,21 @@ end
 # now parse through and replace lines that ref sections
 section_list.each do |section|
   if !section[:code].nil?
-    code_string = ""
+    code_array = []
     section[:code].each_with_index do |line, i|
+      #puts "getting code for #{line}"
       code_for = get_code_for section_list, line.strip
-      code_string << code_for unless code_for.nil?
-      code_string << line if code_for.nil?
+      if !code_for.nil?
+        #puts "doing substitution: #{line} for #{code_for}"
+        # TODO: Insert leading spaces on every line of the substituted code
+        leading_spaces = 0
+        line.each_char{|l| if l == ' ' then leading_spaces += 1 else break end }
+        code_for.each { |line| code_array << ((" " * leading_spaces) << line) }
+      else
+        code_array << line
+      end
     end
-    section[:code] = code_string
+    section[:code] = code_array
   end
 end
 
@@ -100,7 +118,7 @@ end
 
 code = ""
 program[:identifiers].each do |identifier|
-  code += get_code_for section_list, identifier
+  code += get_code_for(section_list, identifier).join('')
 end
 
 File.open(program[:filename], 'w') { |f| f.write(code) }

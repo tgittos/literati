@@ -1,0 +1,117 @@
+== Calculator ==
+This is a simple, command line calculator. It's purpose is to outline
+how a literati document looks, and allow you to run tangle/weave on it
+and observe the output.
+
+We should be able to output just code, or documentation of several kinds:
+- API documentation
+- Textbook style documentation
+
+The API documentation should just contain references to functions we annotate
+should be in the API docs.
+
+The textbook style should contain all the comments on all the literati 
+sections, and any code we annotate should be output with the comment block.
+
+There will be metacode that will operate from within the tangler/weaver on the
+literati document, that doesn't need to be commentend, nor output to the output file.
+This will neeed it's own annotation too.
+
+The documentation should output markdown.
+The format of the code produced should be given.
+
+== Shebang ==
+
+#! /usr/bin/env python
+
+== Imports ==
+I want to terminate this script early at some points, so I need the sys namespace.
+
+import sys
+
+== Ask for a number ==
+We need input for the calculator from the user, so we ask them for it.
+If the user enters a non-numeric number, reprompt them to enter a proper number.
+The user can enter 'q' to quit the program
+@ api, pc
+
+def ask_for_a_number():
+    number = None
+    while number == None:
+        number = raw_input("Please enter a number (q to quit): ")
+    return number
+
+
+== Quit the app ==
+  
+print "Thank you for using calculator"
+sys.exit()
+
+== Store 2 numbers ==
+
+a = ask_for_a_number()
+if a == 'q':
+    Quit the app.
+b = ask_for_a_number()
+if b == 'q':
+    Quit the app.
+
+== Select an operator ==
+Because we don't want to start executing arbirary strings entered by the user,
+we allow them to perform a small subset of mathematical operations through
+this calculator.
+Validate the user and reprompt if they give an invalid value.
+Let them quit by passing in q
+@ api, pc
+
+def select_an_operator():
+    operator = None
+    while operator == None:
+        operator = raw_input("Please enter an operator (+, -, *, /, q to quit: ")
+    return operator
+
+== Store the operator ==
+
+op = select_an_operator()
+
+== Quit if user wants ==
+If the user has entered 'q' as their operator, then quit the program
+
+if op == 'q':
+    Quit the app.
+
+
+== Perform the calculation ==
+@ api, pc
+
+def perform_calculation():
+    if op == '+':
+        return int(a) + int(b)
+    elif op == '-':
+        return int(a) - int(b)
+    elif op == '*':
+        return int(a) * int(b)
+    elif op == '/':
+        return int(a) / int(b)
+
+== Store the result ==
+
+result = perform_calculation()
+
+== Print the result ==
+@api, pc
+
+print "The result of your calculation is ", result
+
+== @calculator.py ==
+Shebang.
+Imports.
+Ask for a number.
+Store 2 numbers.
+Select an operator.
+Store the operator.
+Quit if user wants.
+Perform the calculation.
+Store the result.
+Print the result.
+Quit the app.
