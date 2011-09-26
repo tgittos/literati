@@ -1,8 +1,0 @@
-class Program
-
-  @lines = []
-
-  def initalize
-  end
-
-end

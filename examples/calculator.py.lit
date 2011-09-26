@@ -21,40 +21,44 @@ The documentation should output markdown.
 The format of the code produced should be given.
 
 == Shebang ==
+-
+#! /usr/bin/env python
+-
 
-#! /usr/bin/env ruby
+== Imports ==
+I want to terminate this script early at some points, so I need the sys namespace.
+-
+import sys
+-
 
 == Ask for a number ==
 We need input for the calculator from the user, so we ask them for it.
 If the user enters a non-numeric number, reprompt them to enter a proper number.
 The user can enter 'q' to quit the program
 @ api, pc
-
-def ask_for_a_number
-  number = nil
-  while number.nil?
-    puts 'Please enter a number: '
-    number = gets.gsub(/\n/, '')
-    number = nil? if !(number =~ /[\dq]*/)
-  end
-  number
-end
+-
+def ask_for_a_number():
+    number = None
+    while number == None:
+        number = raw_input("Please enter a number (q to quit): ")
+    return number
+-
 
 == Quit the app ==
-  
-puts 'Thank you for using the calculator.'
-exit
+-
+print "Thank you for using calculator"
+sys.exit()
+-
 
 == Store 2 numbers ==
-
-a = ask_for_a_number
-if a == 'q'
-  Quit the app.
-end
-b = ask_for_a_number
-if b == 'q'
-  Quit the app.
-end
+-
+a = ask_for_a_number()
+if a == 'q':
+    Quit the app.
+b = ask_for_a_number()
+if b == 'q':
+    Quit the app.
+-
 
 == Select an operator ==
 Because we don't want to start executing arbirary strings entered by the user,
@@ -63,60 +67,54 @@ this calculator.
 Validate the user and reprompt if they give an invalid value.
 Let them quit by passing in q
 @ api, pc
-
-def select_an_operator
-  operator = nil
-  while operator.nil?
-    puts 'Please select an operator (+-*/), q to quit: '
-    operator = gets.gsub(/\n/, '')
-    operator = nil unless ['+', '-', '*', '/', 'q'].include?(operator)
-  end
-  return operator
-end
+-
+def select_an_operator():
+    operator = None
+    while operator == None:
+        operator = raw_input("Please enter an operator (+, -, *, /, q to quit: ")
+    return operator
+-
 
 == Store the operator ==
-
-op = select_an_operator
+-
+op = select_an_operator()
+-
 
 == Quit if user wants ==
 If the user has entered 'q' as their operator, then quit the program
-
-if op == 'q'
-  Quit the app.
-end
-
+-
+if op == 'q':
+    Quit the app.
+-
 
 == Perform the calculation ==
 @ api, pc
-
-def perform_calculation(op, a, b)
-  a = Integer(a)
-  b = Integer(b)
-  case op
-    when "+"
-      a + b
-    when "-"
-      a - b
-    when "*"
-      a * b
-    when "/"
-      a / b
-  end
-end
+-
+def perform_calculation():
+    if op == '+':
+        return int(a) + int(b)
+    elif op == '-':
+        return int(a) - int(b)
+    elif op == '*':
+        return int(a) * int(b)
+    elif op == '/':
+        return int(a) / int(b)
+-
 
 == Store the result ==
-
-puts "Performing #{a} #{op} #{b}"
-result = perform_calculation op, a, b
+-
+result = perform_calculation()
+-
 
 == Print the result ==
 @api, pc
+-
+print "The result of your calculation is ", result
+-
 
-puts 'The output of your calculation is: '
-puts result
-
-== @calculator.rb ==
+== @calculator.py ==
 Shebang.
+Imports.
 Ask for a number.
 Store 2 numbers.
 Select an operator.
