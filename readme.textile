@@ -1,13 +1,16 @@
 h1. Literati
+
 Literati is a new take on literate programming (LP) and tries to make a little more human friendly.<br />
 I find it funny that LP is intended to help programmers write programs that are intended for humans to read, and yet some of the syntax looks like a jumble of random symbols.
 
 Literati is less functional, but as a result, less complicated.
 
 h2. Status
+
 Right now it would probably still be classified as experimental, but you're welcome to try it.
 
 h2. Syntax
+
 The syntax for Literati is pretty straightforward, and you could probably pick it from checking
 the examples provided with the source, but for those that want an explanation:
 
@@ -27,7 +30,7 @@ This is the optional comment for the block of code.
 @api, flags
 -
 def the_code
-  # here is some demo ruby code. note the code start and end markers (-)
+  #here is some demo ruby code. note the code start and end markers (-)
 end
 -
 </pre>
@@ -45,6 +48,7 @@ The title.
 </pre>
 
 h2. Referencing
+
 You can reference blocks from other blocks. This is in my opinion where the real magic of Literati kicks in. By referencing blocks from other blocks, or from the program block, you can write programs in a way that is more logical. You can narratively write programs in the order that makes sense, which isn't necessarily the order it needs to be coded in.
 
 The syntax for a reference is simply the title of the block you want to reference, followed by a period.
