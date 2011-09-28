@@ -68,7 +68,6 @@ def hello_world
   Example Block.
 end
 -
-== 
 </pre>
 
 This will tangle into:<br />
