@@ -1,0 +1,111 @@
+== Block ==
+The Block class defines a section of literati code, where a section of code
+is defined as a title, an optional comment, optional API tags and optional
+code.
+
+== Constructor ==
+During initialization, we set the title of this block.
+The title is used to identify the block, and to reference the block
+from other blocks.
+Parameters:
+title - The name of the block
+-
+def initialize(title)
+  @title = title.gsub('=', '').strip
+end
+-
+
+== Get title ==
+-
+def get_title
+  @title
+end
+-
+
+== Get comments ==
+-
+def get_comments
+  @comments
+end
+-
+
+== Get code ==
+-
+def get_code
+  @code
+end
+- 
+
+== Add comment ==
+We maintain an array of comments instead of a string in order to preserve
+formatting on comments.
+If no comments have been added, we initilize the block with an empty comments
+array.
+-
+def add_comment(comment)
+  @comments = [] if @comments.nil?
+  @comments << comment
+end
+-
+
+== Add code ==
+We maintain an array of code instead of a string because it makes
+linking references easier when we're compiling the code.
+If no code has been added, we initilize the block with an empty code
+array.
+-
+def add_code(code)
+  @code = [] if @code.nil?
+  @code << code
+end
+-
+
+== Check if block is a comment only block ==
+If a block has only comments and no code, then we need to
+identify it as different from other blocks. No blocks will reference
+a comment only block, so we can leave it out of linking.
+-
+def is_comment_only?
+  !@comments.nil? && @code.nil?
+end
+-
+
+== Parse metadata ==
+At the moment, no concrete set of metadata has been defined.
+This is an empty hook to parse it once we decide on a set, and
+what each metadata flag does.
+-
+def parse_metadata(data)
+  # decide what to do here later
+  data.gsub!(/@/, '')
+  flags = data.split(',')
+  flags.each do |flag|
+    flag.strip!
+    # handle flag
+  end
+end
+-
+
+== The module ==
+-
+module Parser
+  The class.
+end
+-
+
+== The class ==
+-
+class Block
+  Constructor.
+  Get title.
+  Get comments.
+  Add comment.
+  Get code.
+  Add code.
+  Check if block is a comment only block.
+  Parse metadata.
+end
+-
+
+== @block.rb ==
+The module.
