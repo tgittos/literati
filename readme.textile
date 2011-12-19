@@ -39,11 +39,13 @@ There is only one program block per Literati file, and it describes the way the 
 
 A program block consists of:
 - A title - identifies the filename to be written out
-- A number of references - References to code blocks that are replaced with tangled code.
+- A number of includes - load dependent files and tangle/weave those first
+- A number of references - references to code blocks that are replaced with tangled code.
 
 The syntax for a program block is:<br />
 <pre>
 == @program.rb ==
+include "a_file.rb"
 The title.
 </pre>
 
@@ -81,7 +83,5 @@ h2. Usage
 
 To begin with, either write your own Literati document, or use one of the examples provided with this codebase.
 On a command line, run the following command:
-<pre>./literati.rb examples/calculator.py.lit</pre>
+<pre>./literati.rb [tangle|weave] examples/calculator.py.lit</pre>
 replacing the path to the file you want to tangle.
-
-Right now Literati only supports tangling, not weaving, but that support will be coming soon.

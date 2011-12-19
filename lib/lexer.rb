@@ -18,6 +18,7 @@ module Parser
     self.state = nil
     tokens.each_with_index do |token, i|
       next if token.length == 0
+      token.rstrip!
 
       if line_is_program_definition?(token)
         program = Program.new tokens.slice(i, tokens.count - i)
@@ -29,6 +30,7 @@ module Parser
           # block is comment only block
           statements << current_statement
           current_statement = nil
+          self.state = nil
         end
         self.state = :has_title
         current_statement = Block.new token
@@ -45,6 +47,7 @@ module Parser
       if line_ends_code? token
         statements << current_statement
         current_statement = nil
+        self.state = nil
       end
       
       if line_starts_code? token

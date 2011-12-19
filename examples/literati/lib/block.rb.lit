@@ -11,7 +11,7 @@ Parameters:
 title - The name of the block
 -
 def initialize(title)
-  @title = title.gsub('=', '').strip
+  @title = title.gsub(/\=/, '').strip
 end
 -
 

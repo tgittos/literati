@@ -3,7 +3,7 @@ module Parser
   class Block
 
     def initialize(title)
-      @title = title.gsub('=', '').strip
+      @title = title.gsub(/\=/, '').strip
     end
 
     def get_title

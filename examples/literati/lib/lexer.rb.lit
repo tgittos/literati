@@ -1,0 +1,237 @@
+== Lexer ==
+The lexer file defines a method on the Parser module called lex,
+as well as introducing some state.
+This state is global to the parser module, though it is only used in
+the lexer method. This might be a code smell.
+TODO: Isolate the state to just the lex method, and maybe encapsulate the lexer entirely
+
+The lex method takes a list of tokens and builds literati blocks. These
+blocks are later used by the linker to resolve literati references.
+
+== Requirements ==
+The lexer needs these classes to work
+  - Parser::Block
+  - Parser::Program
+
+The lexer builds an array of blocks containing literati code.
+It also creates and sends back a program based on the definition found
+in the literati source file. This can probably be moved out of the lexer.
+TODO: Move this out of the lexer
+-
+require 'lib/block'
+require 'lib/program'
+-
+
+== State ==
+The lexer requires state as it processes each token, to keep track of where
+to put the token (code or comment).
+-
+def self.state
+  @@state
+end
+
+def self.state=(state)
+  @@state = state
+end
+-
+
+== Lex ==
+The lex method does all of the work for building code blocks. It traverses through
+all the tokens and checks the meaning of each one, and slowly builds and accumulates
+literati code blocks.
+When we're finished evaluating the tokens, we can return an array of blocks and a
+program definition, which will continue to be linked.
+-
+def self.lex tokens
+  statements = []
+  current_statement = nil
+  program = nil
+  self.state = nil
+  Process tokens.
+  [program, statements]
+end
+-
+
+== Process tokens ==
+Loop through each token, and check to see what kind of token it is.
+Skip any tokens that are whitespace only, and if the token has any
+trailing spaces, trim them out as they can interfere with evaluating the type
+of the line.
+As we check lines, we set internal state to track where we are in the execution.
+The order that we check the lines in is important.
+-
+tokens.each_with_index do |token, i|
+  next if token.length == 0
+  token.rstrip!
+  Check if line is program definition.
+  Check if line is title.
+  Check if line is comment.
+  Check if line is metadata.
+  Check if line ends code.
+  Check if line starts code.
+  Check if line is code.
+end
+-
+
+== Check if line is program definition ==
+Check if the line defines a program. If it does, we need to create the program with
+the remaining tokens and then return to the linker. Each line of the program definition
+is a reference, which is taken care of by the linker.
+-
+if line_is_program_definition?(token)
+  program = Program.new tokens.slice(i, tokens.count - i)
+  break
+end
+-
+
+== Check if line is title ==
+If the line is a title, that means we have found another block.
+If our state says that we have a title, that means we haven't found any code,
+and have just been accumulating comments - therefore the block we've previously
+been working on must have been a comment only block. We need to finish that block and
+push it onto the list, and start a new block.
+The state can be anything going into this method, but we need to set the state
+to be :has_title
+-
+if line_is_title? token
+  if self.state == :has_title
+    # block is comment only block
+    statements << current_statement
+    current_statement = nil
+    self.state = nil
+  end
+  self.state = :has_title
+  current_statement = Block.new token
+end
+-
+
+== Check if line is comment ==
+-
+if line_is_comment? token
+  current_statement.add_comment token
+end
+-
+
+== Check if line is metadata ==
+-
+if line_is_metadata? token
+  current_statement.parse_metadata token
+end
+-
+
+== Check if line ends code ==
+If the line ends code, then we know that we've finished a block.
+Push the current block onto the list, and reset the state and the current
+block.
+-
+if line_ends_code? token
+  statements << current_statement
+  current_statement = nil
+  self.state = nil
+end
+-
+
+== Check if line starts code ==
+If the line starts code, then just change the state. This will
+cause line_is_code? to recognise code and push it to the block.
+-
+if line_starts_code? token
+  self.state = :code_started
+end
+-
+
+== Check if line is code ==
+-
+if line_is_code? token
+  current_statement.add_code token
+end
+-
+
+== The class ==
+-
+State.
+Lex.
+private
+Line is program definition.
+Line is title.
+Line is comment.
+Line is metadata.
+Line starts code.
+Line is code.
+Line ends code.
+-
+
+== Line is program definition ==
+A line defines a program if it is a title that starts with an @ symbol.
+-
+def self.line_is_program_definition?(line)
+  line_is_title?(line) && line.gsub(/\s/, '')[2] == "@"
+end
+-
+
+== Line is title ==
+A line is a title if it starts and ends with two equal signs '==' only.
+If the line starts or ends with 1 or more than 2, it will not register as
+a title.
+-
+def self.line_is_title?(line)
+  c = line.length
+  line[0] == '=' && line[1] == '=' && line[2] != '=' &&
+  line[c - 1] == '=' && line[c - 2] == '=' && line[c - 3] != '='
+end
+-
+
+== Line is comment ==
+A line is a comment if we've already found a title, and it's not a title, or metadata
+or code and we're not accumulating code.
+-
+def self.line_is_comment?(line)
+  self.state == :has_title && !line_is_title?(line) && !line_is_metadata?(line) && !line_starts_code?(line) && !line_is_code?(line) && !line_ends_code?(line)
+end
+-
+
+== Line is metadata ==
+A line is metadata if we already have a title, and we find a line that starts with an '@'
+before we've seen any code.
+-
+def self.line_is_metadata?(line)
+  self.state == :has_title && line[0] == '@'
+end
+-
+
+== Line starts code ==
+A line starts code if we've already seen a title, and we see a single dash.
+Literati uses dashes to define segments of code inside blocks.
+-
+def self.line_starts_code?(line)
+  self.state == :has_title && line[0] == '-' && line.length == 1
+end
+-
+
+== Line is code ==
+A line is code if we've started accumulating code and it's not the end of the code
+section.
+-
+def self.line_is_code?(line)
+  self.state == :code_started && !line_ends_code?(line)
+end
+-
+
+== Line ends code ==
+A line ends code if we're accumulating code and we see another single dash.
+-
+def self.line_ends_code?(line)
+  self.state == :code_started && line[0] == '-' && line.length == 1
+end
+-
+
+== The module ==
+-
+Requirements.
+module Parser
+  The class.
+end
+-
+
+== @lexer.rb ==
+The module.

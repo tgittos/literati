@@ -11,7 +11,11 @@ module Parser
       end
     end
 
-    def write(statements, path = nil)
+    def weave(statements, path = nil)
+      puts "Weaving not supported yet"
+    end
+
+    def tangle(statements, path = nil)
       # at the moment, lets just hardcode writing a code file
       buffer = []
       map = build_code_map(statements)
