@@ -6,13 +6,21 @@ module Parser
       @refs = []
       convert_title_to_filename lines.first
       lines.shift
-      lines.each do |line|
-        @refs << line
-      end
+      @refs = lines.dup
     end
 
     def weave(statements, path = nil)
-      puts "Weaving not supported yet"
+      filename = @filename.gsub(/\.rb/,'')
+      File.open("#{filename}.txt", 'w') do |file|
+        statements.each do |statement|
+          next if !(statement.respond_to?(:get_code) && statement.respond_to?(:get_title))
+          next if statement.get_comments.nil? || statement.get_title.nil?
+
+          comment = statement.get_title + "\n" + ("-" * statement.get_title.length) + "\n\n"
+          comment += statement.get_comments.join("\n")
+          file.write "#{comment}\n\n" unless comment.nil?
+        end
+      end
     end
 
     def tangle(statements, path = nil)
@@ -32,7 +40,6 @@ module Parser
     def convert_title_to_filename(title)
       @filename = title.gsub(/[=|\s|@]/, '')
     end
-
     def build_code_map(statements)
       code_map = {}
       statements.each do |statement|
@@ -41,7 +48,7 @@ module Parser
       end
       code_map
     end
-
+    
   end
 
 end
