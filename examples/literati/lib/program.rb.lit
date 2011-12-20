@@ -1,0 +1,89 @@
+== Program ==
+The Program class is perhaps misnamed. It represents a file that is required to be
+written to disk. This includes code files (as the result of a tangle) and doc
+files (as the result of a weave).
+The Program class is responsible for implementing weaving and tangling.
+
+== Convert title to filename ==
+Take a title that declares a file and turn the title into a usable filename.
+We use this when the Program instance is initialized
+-
+def convert_title_to_filename(title)
+  @filename = title.gsub(/[=|\s|@]/, '')
+end
+-
+
+== Initialize ==
+Take an array of lines that form a program definition.
+The first line will be the filename, so convert that first.
+Then copy all lines to an instance variable.
+-
+def initialize(lines)
+  @refs = []
+  convert_title_to_filename lines.first
+  lines.shift
+  @refs = lines.dup
+end
+-
+
+== Weave ==
+We haven't implemented weaving just yet.
+-
+def weave(statements, path = nil)
+  puts "Weaving not supported yet"
+end
+-
+
+== Build code map ==
+Build another code map. For details, see the Build Code Map section of the linker.
+TODO: Refactor this into a module wide method, or something.
+-
+def build_code_map(statements)
+  code_map = {}
+  statements.each do |statement|
+    next if !(statement.respond_to?(:get_code) && statement.respond_to?(:get_title))
+    code_map[statement.get_title] = statement
+  end
+  code_map
+end
+-
+
+== Tangle ==
+Build a code map from a list of statements given. Then take the @refs global that
+holds a list of ordered literati block references, and slowly build the file to
+be written out. Then write out the file at the filename we converted earlier.
+-
+def tangle(statements, path = nil)
+  # at the moment, lets just hardcode writing a code file
+  buffer = []
+  map = build_code_map(statements)
+  @refs.each do |ref|
+    buffer.concat map[ref.gsub('.', '').strip].get_code
+  end
+  File.open(@filename, 'w') do |file|
+    buffer.each { |line| file.write("#{line}\n") }
+  end
+end
+-
+
+== The class ==
+-
+class Program
+  Initialize.
+  Weave.
+  Tangle.
+  private
+  Convert title to filename.
+  Build code map.
+end
+-
+
+== The module ==
+-
+module Parser
+  The class.
+end
+-
+
+== @program.rb ==
+The module.

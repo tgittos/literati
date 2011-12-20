@@ -1,0 +1,72 @@
+== Linker ==
+The linker injects a link method into the Parse module. Overall, it is responsible
+for substituting literati references with the code segments that are being referenced.
+
+== Link ==
+-
+def self.link(statements)
+  Build code map.
+  Link statements.
+  statements
+end
+-
+
+== Build code map ==
+In order to link the literati program together, we need to create a dictionary of
+code chunks, indexed by their names.
+We use duck-typing to ignore malformed code blocks that aren't the right type.
+We really shouldn't be getting them, so maybe this can be removed.
+TODO: Determine if we need the duck-type check.
+-
+code_map = {}
+statements.each do |statement|
+  next if !(statement.respond_to?(:get_code) && statement.respond_to?(:get_title))
+  code_map[statement.get_title] = statement
+end
+-
+
+== Link statements ==
+Go through each literati block (henceforth referred to as a statement) and get
+the code for it. Then link the code for this block. Ignore statements that have
+no code (as they don't need to be linked)
+TODO: Determine if we need the duc-type check.
+-
+statements.each do |statement|
+  next if !(statement.respond_to?(:get_code) && statement.respond_to?(:get_title)) || statement.get_code.nil?
+  code = statement.get_code
+  Link code.
+end
+-
+
+== Link code ==
+Go through each line of the code, and check to see if it is a reference. References will
+end with periods. Take the reference and pull the statement it refers to from the code map.
+Then do the replacement, making sure we preserve indenting (Python will thank us).
+Because we do it iteratively for each line, whenever we add new lines, we'll examine those next.
+This allows us to resolve nested references without recursion.
+-
+code.each_with_index do |line, i|
+  if line[line.length - 1] == '.'
+    #could be a reference
+    replacement = code_map[line.gsub('.', '').strip]
+    if !replacement.nil?
+      indent = 0
+      line.each_char{|c| if c == ' ' then indent += 1 else break end }
+      code.delete_at i
+      replacement.get_code.reverse.each do |replacement_line|
+        code.insert(i, (" " * indent) << replacement_line)
+      end
+    end
+  end
+end
+-
+
+== The module ==
+-
+module Parser
+  Link.
+end
+-
+
+== @linker.rb ==
+The module.

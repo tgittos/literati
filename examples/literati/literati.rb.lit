@@ -1,0 +1,77 @@
+== Literati ==
+Literati is a literate programming library written in Ruby.
+
+One of the big issues with development is how fast code
+documentation becomes out of date, when it is written at all.
+
+While programs are executed by computers, we write them mostly
+for the benefit of other programmers, hence the proliferation of
+high level languages such as Ruby and Python.
+
+Literate programming is an attempt to solve this problem by 
+tightly coupling the code to the documentation, and to help
+programmers write clearer programs for each other first, and for
+computers second.
+
+Literate programming was pioneered by Donald Knuth, and while there
+are a lot of software packages to tangle/weave literate programming
+files, there's a wide variety of syntaxes for writing documents.
+
+Literati attempts to keep the literate programming syntax as
+close to regular text as possible, so you don't have to think
+about how to format your programs and documentation.
+
+Literati keeps out of your way so you can do what you do best:
+write code.
+
+== Usage ==
+You can access it's functionality with the following switches:
+- weave [-a, -d] [file, file, ...]
+Weave takes optional arguments, which will control which kind of
+documentation is generated
+- tangle [file, file, ...]
+
+== Weave ==
+Weaving will parse the Literati source and will create documentation
+from it. You can pass in some flags to control the documentation:
+-a: This will generate API docs, which is any comment block tagged
+with @api.
+-d: This will generate long form documentation, which is any comment
+block tagged with @doc.
+Comment blocks can be tagged with both tags, but need to be tagged
+with at least one.
+
+== Tangle ==
+Tangling will parse the Literati source and will create a source code
+from it. Literati is language agnostic, and will attempt to preserve
+whitespace. Code blocks must follow a documentation block.
+The order you define sections doesn't matter, as there is a program
+description section at the end of every Literati document that 
+specifies the order the source code should be compiled.
+
+== Glue ==
+-
+#! /usr/bin/env ruby
+
+$: << '.' unless $:.include?('.')
+require 'lib/tokenizer'
+require 'lib/lexer'
+require 'lib/linker'
+
+if ARGV.length < 2
+  abort "Usage: literati.rb [tangle|weave] input_file"
+end
+
+mode = ARGV[0]
+input_file = ARGV[1]
+
+abort "I don't know how to '#{mode}'" unless Parser::Program.method_defined? mode
+
+tokens = Parser::tokenize input_file
+program, statements = Parser::lex tokens
+statements = Parser::link statements
+program.send(mode.to_sym, statements)
+-
+
+== @literati2.rb ==
+Glue.

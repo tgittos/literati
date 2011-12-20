@@ -1,0 +1,29 @@
+== Tokenizer ==
+Given the content of a file, convert it to a list of tokens.
+Most programming languages will do this on a whitespace level, so spaces,
+tabs, etc.
+Literati does this on a line level.
+
+== Tokenize ==
+Split the input text into an array of individual lines, and trim the new-line
+markers from each line. Those are our tokens.
+-
+def self.tokenize input_file
+  tokens = []
+  # tokens are lines in literati
+  File.readlines(input_file).each do |line|
+    tokens << line.gsub("\n", '')
+  end
+  tokens
+end
+-
+
+== The module ==
+-
+module Parser
+  Tokenize.
+end
+-
+
+== @tokenizer.rb ==
+The module.
