@@ -77,6 +77,7 @@ end
 Check if the line defines a program. If it does, we need to create the program with
 the remaining tokens and then return to the linker. Each line of the program definition
 is a reference, which is taken care of by the linker.
+@code
 -
 if line_is_program_definition?(token)
   program = Program.new tokens.slice(i, tokens.count - i)

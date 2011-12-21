@@ -36,6 +36,17 @@ def get_code
 end
 - 
 
+== Has flag ==
+Flags can be set in documentation, and get passed straight to the formatter.
+The formatter then decides how best to handle the flag, and what flags it handles.
+So therefore, there needs to be a generic way of handling flags.
+-
+def has_flag?(flag)
+  return false if @flags.nil?
+  @flags.include?(flag)
+end
+-
+
 == Add comment ==
 We maintain an array of comments instead of a string in order to preserve
 formatting on comments.
@@ -71,17 +82,14 @@ end
 -
 
 == Parse metadata ==
-At the moment, no concrete set of metadata has been defined.
-This is an empty hook to parse it once we decide on a set, and
-what each metadata flag does.
+Store flags passed in in text, and allow them to be queried with "has_flags".
+The formatters can then be responsible with how the flags are handled.
 -
 def parse_metadata(data)
-  # decide what to do here later
   data.gsub!(/@/, '')
-  flags = data.split(',')
-  flags.each do |flag|
+  @flags = data.split(',')
+  @flags.each do |flag|
     flag.strip!
-    # handle flag
   end
 end
 -
@@ -102,6 +110,7 @@ class Block
   Add comment.
   Get code.
   Add code.
+  Has flag.
   Check if block is a comment only block.
   Parse metadata.
 end

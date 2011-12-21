@@ -1,0 +1,41 @@
+== Text Formatter ==
+The most basic formatter, the text formatter takes in plain text and tries to
+format it in a visually pleasing way. This is mostly just simple headers and
+comment blocks, and clearly delineating where code starts and ends.
+
+== Format ==
+Take the given list of blocks, go through the list and process each block.
+1. Create a header from the title and underline it
+2. Split the comment from the header
+3. Split each comment from the other comments
+-
+def self.format(statements)
+  comment = ""
+  statements.each do |statement|
+    next if !(statement.respond_to?(:get_code) && statement.respond_to?(:get_title))
+    next if statement.get_comments.nil? || statement.get_title.nil?
+    
+    comment += statement.get_title + "\n" + ("-" * statement.get_title.length) + "\n"
+    comment += statement.get_comments.join("\n")
+
+    if (statement.has_flag?('code'))
+      comment += "\n\nCode:\n\n" + statement.get_code.join("\n")
+      comment += "\n"
+    end
+
+    comment += "\n\n"
+  end
+  comment
+end
+-
+
+
+== The module ==
+-
+module Formatter
+  Format.
+end
+-
+
+== @text.rb ==
+The module.

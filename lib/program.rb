@@ -10,17 +10,10 @@ module Parser
     end
 
     def weave(statements, path = nil)
+      require 'lib/formatter/text' # this is hard coded, but should be passed in
       filename = @filename.gsub(/\.rb/,'')
-      File.open("#{filename}.txt", 'w') do |file|
-        statements.each do |statement|
-          next if !(statement.respond_to?(:get_code) && statement.respond_to?(:get_title))
-          next if statement.get_comments.nil? || statement.get_title.nil?
-
-          comment = statement.get_title + "\n" + ("-" * statement.get_title.length) + "\n\n"
-          comment += statement.get_comments.join("\n")
-          file.write "#{comment}\n\n" unless comment.nil?
-        end
-      end
+      comment = Formatter::format(statements)
+      File.open("#{filename}.txt", 'w') {|f| f.write(comment) } unless comment.nil?
     end
 
     def tangle(statements, path = nil)

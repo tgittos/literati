@@ -30,25 +30,15 @@ end
 It is a assumed that the documentation is written in order, after all, a Literati document
 is intended to be human readable first, and then able to be compiled down into programming
 code that a computer can execute.
-Go through each of the given statements, and extract the comment. Build the comment with the
-block title, underline it and add the comment.
-Then append the comment to the file.
-Right now we hard code the format, however that could be a metadata field, the and we can
+Right now we hard code the formatter, however that could be a metadata field, the and we can
 allow the user to just compile HTML doc, or textile doc, or whatever.
 We can add custom formatters so that people can extend the Literati with a custom formatting.
 -
 def weave(statements, path = nil)
+  require 'lib/formatter/text' # this is hard coded, but should be passed in
   filename = @filename.gsub(/\.rb/,'')
-  File.open("#{filename}.txt", 'w') do |file|
-    statements.each do |statement|
-      next if !(statement.respond_to?(:get_code) && statement.respond_to?(:get_title))
-      next if statement.get_comments.nil? || statement.get_title.nil?
-
-      comment = statement.get_title + "\n" + ("-" * statement.get_title.length) + "\n\n"
-      comment += statement.get_comments.join("\n")
-      file.write "#{comment}\n\n" unless comment.nil?
-    end
-  end
+  comment = Formatter::format(statements)
+  File.open("#{filename}.txt", 'w') {|f| f.write(comment) } unless comment.nil?
 end
 -
 
