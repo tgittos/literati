@@ -13,6 +13,7 @@ module Parser
       require 'lib/formatter/text' # this is hard coded, but should be passed in
       Dir.mkdir(@base_output_dir) if not File.exists?(@base_output_dir)
       Dir.mkdir(@base_weave_dir) if not File.exists?(@base_weave_dir)
+      build_dir_structure(@filename, @base_weave_dir)
       filename = File.join(@base_weave_dir, @filename.gsub(/\.rb/,''))
       comment = Formatter::format(statements)
       File.open("#{filename}.txt", 'w') {|f| f.write(comment) } unless comment.nil?
