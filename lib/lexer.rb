@@ -17,8 +17,8 @@ module Parser
     program = nil
     self.state = nil
     tokens.each_with_index do |token, i|
-      next if token.length == 0
       token.rstrip!
+      next if token.length == 0
 
       if line_is_program_definition?(token)
         program = Program.new tokens.slice(i, tokens.count - i)
@@ -65,13 +65,14 @@ module Parser
   private
 
   def self.line_is_program_definition?(line)
-    line_is_title?(line) && line.gsub(/\s/, '')[2] == "@"
+    line_is_title?(line) && line.gsub(/\s/, '')[2].chr == "@"
   end
 
   def self.line_is_title?(line)
     c = line.length
-    line[0] == '=' && line[1] == '=' && line[2] != '=' &&
-    line[c - 1] == '=' && line[c - 2] == '=' && line[c - 3] != '='
+    return false if c < 4
+    line[0].chr == '=' && line[1].chr == '=' && line[2].chr != '=' &&
+    line[c - 1].chr == '=' && line[c - 2].chr == '=' && line[c - 3].chr != '='
   end
 
   def self.line_is_comment?(line)
@@ -79,11 +80,11 @@ module Parser
   end
 
   def self.line_is_metadata?(line)
-    self.state == :has_title && line[0] == '@'
+    self.state == :has_title && line[0].chr == '@'
   end
 
   def self.line_starts_code?(line)
-    self.state == :has_title && line[0] == '-' && line.length == 1
+    self.state == :has_title && line[0].chr == '-' && line.length == 1
   end
 
   def self.line_is_code?(line)
@@ -91,7 +92,7 @@ module Parser
   end
 
   def self.line_ends_code?(line)
-    self.state == :code_started && line[0] == '-' && line.length == 1
+    self.state == :code_started && line[0].chr == '-' && line.length == 1
   end
 
 end

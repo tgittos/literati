@@ -116,5 +116,5 @@ class Block
 end
 -
 
-== @block.rb ==
+== @lib/block.rb ==
 The module.

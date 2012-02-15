@@ -1,2 +1,3 @@
 *.sublime-project
 *.DS_Store
+output/*

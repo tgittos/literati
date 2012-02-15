@@ -46,7 +46,7 @@ Because we do it iteratively for each line, whenever we add new lines, we'll exa
 This allows us to resolve nested references without recursion.
 -
 code.each_with_index do |line, i|
-  if line[line.length - 1] == '.'
+  if line[line.length - 1].chr == '.'
     #could be a reference
     replacement = code_map[line.gsub('.', '').strip]
     if !replacement.nil?
@@ -68,5 +68,5 @@ module Parser
 end
 -
 
-== @linker.rb ==
+== @lib/linker.rb ==
 The module.

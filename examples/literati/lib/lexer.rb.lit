@@ -61,8 +61,8 @@ As we check lines, we set internal state to track where we are in the execution.
 The order that we check the lines in is important.
 -
 tokens.each_with_index do |token, i|
-  next if token.length == 0
   token.rstrip!
+  next if token.length == 0
   Check if line is program definition.
   Check if line is title.
   Check if line is comment.
@@ -177,8 +177,8 @@ a title.
 -
 def self.line_is_title?(line)
   c = line.length
-  line[0] == '=' && line[1] == '=' && line[2] != '=' &&
-  line[c - 1] == '=' && line[c - 2] == '=' && line[c - 3] != '='
+  line[0].chr == '=' && line[1].chr == '=' && line[2].chr != '=' &&
+  line[c - 1].chr == '=' && line[c - 2].chr == '=' && line[c - 3].chr != '='
 end
 -
 
@@ -196,7 +196,7 @@ A line is metadata if we already have a title, and we find a line that starts wi
 before we've seen any code.
 -
 def self.line_is_metadata?(line)
-  self.state == :has_title && line[0] == '@'
+  self.state == :has_title && line[0].chr == '@'
 end
 -
 
@@ -205,7 +205,7 @@ A line starts code if we've already seen a title, and we see a single dash.
 Literati uses dashes to define segments of code inside blocks.
 -
 def self.line_starts_code?(line)
-  self.state == :has_title && line[0] == '-' && line.length == 1
+  self.state == :has_title && line[0].chr == '-' && line.length == 1
 end
 -
 
@@ -222,7 +222,7 @@ end
 A line ends code if we're accumulating code and we see another single dash.
 -
 def self.line_ends_code?(line)
-  self.state == :code_started && line[0] == '-' && line.length == 1
+  self.state == :code_started && line[0].chr == '-' && line.length == 1
 end
 -
 
@@ -234,5 +234,5 @@ module Parser
 end
 -
 
-== @lexer.rb ==
+== @lib/lexer.rb ==
 The module.

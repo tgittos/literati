@@ -37,5 +37,5 @@ module Formatter
 end
 -
 
-== @text.rb ==
+== @lib/formatter/text.rb ==
 The module.
