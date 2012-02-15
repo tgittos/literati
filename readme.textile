@@ -12,7 +12,7 @@ Right now it would probably still be classified as experimental, but you're welc
 h2. Syntax
 
 The syntax for Literati is pretty straightforward, and you could probably pick it from checking
-the examples provided with the source, but for those that want an explanation:
+the examples provided with the source (in fact this is what I recommend), but for those that want an explanation:
 
 Literati functions on the concept of blocks of Literati code.<br />
 There are 2 types of block, a code block and a program block.
@@ -20,14 +20,12 @@ There are 2 types of block, a code block and a program block.
 Each block of code consists of:
 - A title - identifies the block to other parts of Literati code, used in referencing.
 - An optional comment - this gets weaved into documentation
-- An optional API flag - these control how documentation is weaved. For example, whether to include code into the weave.
 - An optional block of application code - this gets tangled into programs. It's optional because you can have comment only blocks.
 
 The syntax for a block is:<br />
 <pre>
 == The title ==
 This is the optional comment for the block of code.
-@api, flags
 -
 def the_code
   #here is some demo ruby code. note the code start and end markers (-)
@@ -38,14 +36,12 @@ end
 There is only one program block per Literati file, and it describes the way the file is put together. It uses referencing, which will be discussed next.
 
 A program block consists of:
-- A title - identifies the filename to be written out
-- A number of includes - load dependent files and tangle/weave those first
+- A title - identifies the filename or path to be written out
 - A number of references - references to code blocks that are replaced with tangled code.
 
 The syntax for a program block is:<br />
 <pre>
-== @program.rb ==
-include "a_file.rb"
+== @path/to/program.rb ==
 The title.
 </pre>
 
@@ -81,7 +77,12 @@ end
 
 h2. Usage
 
-To begin with, either write your own Literati document, or use one of the examples provided with this codebase.
+By default, literati will tangle all the literati files it finds in the current directory, recursively.
+
+The simplest way to get started would be to clone this repo, chmod literati.rb to be executable, then run:
+<pre>./literati.rb tangle</pre> or <pre>./literati.rb weave</pre>.
+
+Or you can write your own Literati document, or use one of the examples provided with this codebase, and tangle or weave an individual file.
 On a command line, run the following command:
-<pre>./literati.rb [tangle|weave] examples/calculator.py.lit</pre>
+<pre>./literati.rb [tangle|weave] [examples/calculator.py.lit]</pre>
 replacing the path to the file you want to tangle.
