@@ -33,7 +33,9 @@ end
 == The module ==
 -
 module Formatter
+
   Format.
+  
 end
 -
 

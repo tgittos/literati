@@ -112,15 +112,30 @@ result = perform_calculation()
 print "The result of your calculation is ", result
 -
 
-== @calculator.py ==
+== The program ==
+The program should be formatted correctly.
+-
 Shebang.
+
 Imports.
+
 Ask for a number.
+
 Store 2 numbers.
+
 Select an operator.
+
 Store the operator.
+
 Quit if user wants.
+
 Perform the calculation.
+
 Store the result.
+
 Print the result.
 Quit the app.
+-
+
+== @calculator.py ==
+The program.

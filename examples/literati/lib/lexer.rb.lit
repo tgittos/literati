@@ -62,14 +62,13 @@ The order that we check the lines in is important.
 -
 tokens.each_with_index do |token, i|
   token.rstrip!
-  next if token.length == 0
   Check if line is program definition.
   Check if line is title.
   Check if line is comment.
   Check if line is metadata.
   Check if line ends code.
   Check if line starts code.
-  Check if line is code.
+  Check if line is code or whitespace.
 end
 -
 
@@ -80,7 +79,7 @@ is a reference, which is taken care of by the linker.
 @code
 -
 if line_is_program_definition?(token)
-  program = Program.new tokens.slice(i, tokens.count - i)
+  program = Program.new tokens.slice(i, tokens.count - i).reject{|t| t.strip.length == 0}
   break
 end
 -
@@ -141,9 +140,9 @@ if line_starts_code? token
 end
 -
 
-== Check if line is code ==
+== Check if line is code or whitespace ==
 -
-if line_is_code? token
+if line_is_code?(token) || line_is_whitespace?(token)
   current_statement.add_code token
 end
 -
@@ -151,14 +150,25 @@ end
 == The class ==
 -
 State.
+
 Lex.
+
 private
+
 Line is program definition.
+
 Line is title.
+
 Line is comment.
+
 Line is metadata.
+
 Line starts code.
+
 Line is code.
+
+Line is whitespace.
+
 Line ends code.
 -
 
@@ -166,7 +176,8 @@ Line ends code.
 A line defines a program if it is a title that starts with an @ symbol.
 -
 def self.line_is_program_definition?(line)
-  line_is_title?(line) && line.gsub(/\s/, '')[2] == "@"
+  return false if line.length < 1
+  line_is_title?(line) && line.gsub(/\s/, '')[2].chr == "@"
 end
 -
 
@@ -177,6 +188,7 @@ a title.
 -
 def self.line_is_title?(line)
   c = line.length
+  return false if c < 4
   line[0].chr == '=' && line[1].chr == '=' && line[2].chr != '=' &&
   line[c - 1].chr == '=' && line[c - 2].chr == '=' && line[c - 3].chr != '='
 end
@@ -196,6 +208,7 @@ A line is metadata if we already have a title, and we find a line that starts wi
 before we've seen any code.
 -
 def self.line_is_metadata?(line)
+  return false if line.length < 2
   self.state == :has_title && line[0].chr == '@'
 end
 -
@@ -205,16 +218,26 @@ A line starts code if we've already seen a title, and we see a single dash.
 Literati uses dashes to define segments of code inside blocks.
 -
 def self.line_starts_code?(line)
+  return false if line.length < 1
   self.state == :has_title && line[0].chr == '-' && line.length == 1
 end
 -
 
 == Line is code ==
 A line is code if we've started accumulating code and it's not the end of the code
-section.
+section. This includes whitespace
 -
 def self.line_is_code?(line)
+  return false if line.length < 1
   self.state == :code_started && !line_ends_code?(line)
+end
+-
+
+== Line is whitespace ==
+A line is whitespace if it has 0 length (after trimming spaces)
+-
+def self.line_is_whitespace?(line)
+  return self.state == :code_started && line.strip.length == 0
 end
 -
 
@@ -222,6 +245,7 @@ end
 A line ends code if we're accumulating code and we see another single dash.
 -
 def self.line_ends_code?(line)
+  return false if line.length < 1
   self.state == :code_started && line[0].chr == '-' && line.length == 1
 end
 -

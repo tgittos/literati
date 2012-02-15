@@ -104,15 +104,25 @@ end
 == The class ==
 -
 class Block
+
   Constructor.
+
   Get title.
+
   Get comments.
+
   Add comment.
+
   Get code.
+
   Add code.
+
   Has flag.
+
   Check if block is a comment only block.
+
   Parse metadata.
+  
 end
 -
 

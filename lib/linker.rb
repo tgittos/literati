@@ -10,7 +10,7 @@ module Parser
       next if !(statement.respond_to?(:get_code) && statement.respond_to?(:get_title)) || statement.get_code.nil?
       code = statement.get_code
       code.each_with_index do |line, i|
-        if line[line.length - 1].chr == '.'
+        if line.length > 0 && line[line.length - 1].chr == '.'
           #could be a reference
           replacement = code_map[line.gsub('.', '').strip]
           if !replacement.nil?

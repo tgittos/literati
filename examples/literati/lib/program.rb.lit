@@ -113,13 +113,21 @@ end
 == The class ==
 -
 class Program
+
   Initialize.
+
   Weave.
+
   Tangle.
+
   private
+
   Convert title to filename.
+
   Build code map.
+
   Build directory structure.
+  
 end
 -
 
