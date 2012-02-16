@@ -1,4 +1,5 @@
 module Formatter
+
   def self.format(statements)
     comment = ""
     statements.each do |statement|
@@ -7,12 +8,15 @@ module Formatter
   
       comment += statement.get_title + "\n" + ("-" * statement.get_title.length) + "\n"
       comment += statement.get_comments.join("\n")
-      if (statement.has_flag?('code'))
+  
+      if (not statement.has_flag?('no-code')) && !statement.get_code.nil?
         comment += "\n\nCode:\n\n" + statement.get_code.join("\n")
         comment += "\n"
       end
+  
       comment += "\n\n"
     end
     comment
   end
+
 end

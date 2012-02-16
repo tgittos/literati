@@ -8,6 +8,7 @@ Take the given list of blocks, go through the list and process each block.
 1. Create a header from the title and underline it
 2. Split the comment from the header
 3. Split each comment from the other comments
+@foobar, no-code
 -
 def self.format(statements)
   comment = ""
@@ -18,7 +19,7 @@ def self.format(statements)
     comment += statement.get_title + "\n" + ("-" * statement.get_title.length) + "\n"
     comment += statement.get_comments.join("\n")
 
-    if (statement.has_flag?('code'))
+    unless (statement.has_flag?('no-code')) && statement.get_code != ""
       comment += "\n\nCode:\n\n" + statement.get_code.join("\n")
       comment += "\n"
     end

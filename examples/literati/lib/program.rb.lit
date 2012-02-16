@@ -110,6 +110,15 @@ def tangle(statements, path = nil)
 end
 -
 
+== All ==
+Do both a weave and a tangle on the list of statements given.
+-
+def all(statements)
+  weave(statements)
+  tangle(statements)
+end
+-
+
 == The class ==
 -
 class Program
@@ -119,6 +128,8 @@ class Program
   Weave.
 
   Tangle.
+
+  All.
 
   private
 

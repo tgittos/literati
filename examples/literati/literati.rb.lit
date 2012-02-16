@@ -26,6 +26,9 @@ write code.
 
 == Usage ==
 You can access it's functionality with the following switches:
+- all [file, file, ...]
+All takes optional arguments, which will control which files are operated
+on. It will perform both a weave and a tangle on each file.
 - weave [file, file, ...]
 Weave takes optional arguments, which will control which kind of
 documentation is generated
@@ -54,6 +57,8 @@ specifies the order the source code should be compiled.
 Check the arguments passed in. If no file is passed in,
 recursively gather a list of paths to tangle or weave.
 Otherwise, just set it to the passed in file path.
+If you pass in a file, it will operate on a single file. If you pass in a
+path, it will operate recursively on that path.
 -
 if ARGV.length < 1
   abort "Usage: literati.rb [tangle|weave] [input_file]"
@@ -64,13 +69,21 @@ mode = ARGV.shift
 abort "I don't know how to '#{mode}'" unless Parser::Program.method_defined? mode
 
 # gather paths
-input_files = ARGV
-if input_files.empty?
-  Find.find('./') do |path|
-    next if File.directory? path
-    input_files << path if File.basename(path) =~ /\.lit$/i
+input_files = []
+ARGV << './' if ARGV.empty?
+ARGV.each do |arg|
+  next if not File.exists?(arg)
+  if !File.directory?(arg)
+    input_files << arg if File.basename(arg) =~ /\.lit$/i
+  else
+    Find.find(arg) do |path|
+      next if File.directory? path
+      input_files << path if File.basename(path) =~ /\.lit$/i
+    end
   end
 end
+
+abort "Couldn't find path '#{input}'. Are you sure it's correct?" if input_files.empty?
 
 puts "#{mode.chop}ing:\n#{input_files.join("\n")}"
 -

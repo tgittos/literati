@@ -1,5 +1,6 @@
 module Parser
   class Program
+  
     def initialize(lines)
       @refs = []
       convert_title_to_filename lines.first
@@ -9,6 +10,7 @@ module Parser
       @base_tangle_dir = File.join(@base_output_dir, 'src')
       @base_weave_dir = File.join(@base_output_dir, 'doc')
     end
+  
     def weave(statements, path = nil)
       require 'lib/formatter/text' # this is hard coded, but should be passed in
       Dir.mkdir(@base_output_dir) if not File.exists?(@base_output_dir)
@@ -18,6 +20,7 @@ module Parser
       comment = Formatter::format(statements)
       File.open("#{filename}.txt", 'w') {|f| f.write(comment) } unless comment.nil?
     end
+  
     def tangle(statements, path = nil)
       Dir.mkdir(@base_output_dir) if not File.exists?(@base_output_dir)
       Dir.mkdir(@base_tangle_dir) if not File.exists?(@base_tangle_dir)
@@ -32,10 +35,18 @@ module Parser
         buffer.each { |line| file.write("#{line}\n") }
       end
     end
+  
+    def all(statements)
+      weave(statements)
+      tangle(statements)
+    end
+  
     private
+  
     def convert_title_to_filename(title)
       @filename = title.gsub(/[=|\s|@]/, '')
     end
+  
     def build_code_map(statements)
       code_map = {}
       statements.each do |statement|
@@ -44,6 +55,7 @@ module Parser
       end
       code_map
     end
+  
     def build_dir_structure(name, base)
       # handle both Windows and *nix file structures
       dirs = name.split(/[\/\\]/)
@@ -55,5 +67,6 @@ module Parser
         current_path = File.join(current_path, dir)
       end
     end
+  
   end
 end
