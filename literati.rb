@@ -29,7 +29,7 @@ ARGV.each do |arg|
   end
 end
 
-abort "Couldn't find path '#{input}'. Are you sure it's correct?" if input_files.empty?
+abort "Couldn't find path/s '#{ARGV.join(', ')}'. Are you sure it's correct?" if input_files.empty?
 
 puts "#{mode.chop}ing:\n#{input_files.join("\n")}"
 
