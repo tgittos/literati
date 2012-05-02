@@ -46,7 +46,7 @@ allow the user to just compile HTML doc, or textile doc, or whatever.
 We can add custom formatters so that people can extend the Literati with a custom formatting.
 -
 def weave(statements, path = nil)
-  require 'lib/formatter/text' # this is hard coded, but should be passed in
+  require 'formatter/text' # this is hard coded, but should be passed in
   Create output dir.
   Dir.mkdir(@base_weave_dir) if not File.exists?(@base_weave_dir)
   build_dir_structure(@filename, @base_weave_dir)
@@ -149,5 +149,5 @@ module Parser
 end
 -
 
-== @lib/program.rb ==
+== @literati/lib/literati/program.rb ==
 The module.

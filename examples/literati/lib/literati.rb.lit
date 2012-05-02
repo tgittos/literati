@@ -60,53 +60,99 @@ Otherwise, just set it to the passed in file path.
 If you pass in a file, it will operate on a single file. If you pass in a
 path, it will operate recursively on that path.
 -
-if ARGV.length < 1
-  abort "Usage: literati.rb [tangle|weave] [input_file]"
-end
-
-# sanity check on mode
-mode = ARGV.shift
-abort "I don't know how to '#{mode}'" unless Parser::Program.method_defined? mode
-
-# gather paths
-input_files = []
-ARGV << './' if ARGV.empty?
-ARGV.each do |arg|
-  next if not File.exists?(arg)
-  if !File.directory?(arg)
-    input_files << arg if File.basename(arg) =~ /\.lit$/i
-  else
-    Find.find(arg) do |path|
-      next if File.directory? path
-      input_files << path if File.basename(path) =~ /\.lit$/i
+def self.gather_paths(files)
+  input_files = []
+  files << './' if files.empty?
+  files.each do |arg|
+    next if not File.exists?(arg)
+    if !File.directory?(arg)
+      input_files << arg if File.basename(arg) =~ /\.lit$/i
+    else
+      Find.find(arg) do |path|
+        next if File.directory? path
+        input_files << path if File.basename(path) =~ /\.lit$/i
+      end
     end
   end
+  input_files
 end
-
-abort "Couldn't find path/s '#{ARGV.join(', ')}'. Are you sure it's correct?" if input_files.empty?
-
-puts "#{mode.chop}ing:\n#{input_files.join("\n")}"
 -
 
-== Glue ==
+== Process documents ==
+For each document, tokenize, lex, and link the document.
+Then based on the command, either weave documentation or tangle
+some source code.
 -
-#! /usr/bin/env ruby
-
-$: << '.' unless $:.include?('.')
-require 'find'
-require 'lib/tokenizer'
-require 'lib/lexer'
-require 'lib/linker'
-
-Gather documents.
-
-input_files.each do |file|
+input.each do |file|
   tokens = Parser::tokenize file
   program, statements = Parser::lex tokens
   statements = Parser::link statements
-  program.send(mode.to_sym, statements)
+  program.send(command.to_sym, statements)
 end
 -
 
-== @literati.rb ==
-Glue.
+== Sanity check inputs ==
+Due to packaging this in a gem, and the way the binary works, we need
+to check for valid arguments before we being trying to work with
+commands and files passed in.
+-
+# sanity check on inputs
+if command.nil?
+  puts "Usage: literati.rb [tangle|weave] [input_file]"
+  return
+end
+
+# sanity check on command
+unless Parser::Program.method_defined? command
+  puts "I don't know how to '#{command}'"
+  return
+end
+-
+
+== Sanity check files ==
+We don't want to try and process files if we can't find any, so bail if
+none of the paths given have literati files in them
+-
+if input.empty?
+  puts "Couldn't find path/s '#{input.join(', ')}'. Are you sure it's correct?"
+  return
+end
+-
+
+== Required files ==
+-
+require 'find'
+require 'literati/tokenizer'
+require 'literati/lexer'
+require 'literati/linker'
+-
+
+== The class ==
+-
+Required files.
+
+class Literati
+
+  def self.process(command, files)
+
+    Sanity check inputs.
+
+    input = gather_paths(files)
+    
+    Sanity check files.
+
+    puts "#{command.chop}ing:\n#{input.join("\n")}"
+
+    Process documents.
+
+  end
+
+  private
+
+  Gather documents.
+
+end
+-
+
+== @literati/lib/literati.rb ==
+The class.

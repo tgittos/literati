@@ -27,5 +27,5 @@ module Parser
 end
 -
 
-== @lib/tokenizer.rb ==
+== @literati/lib/literati/tokenizer.rb ==
 The module.

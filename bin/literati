@@ -1,0 +1,5 @@
+#! /usr/bin/env ruby
+
+require 'literati'
+
+Literati.process(ARGV.shift, ARGV)

@@ -12,7 +12,7 @@ module Parser
     end
   
     def weave(statements, path = nil)
-      require 'lib/formatter/text' # this is hard coded, but should be passed in
+      require 'formatter/text' # this is hard coded, but should be passed in
       Dir.mkdir(@base_output_dir) if not File.exists?(@base_output_dir)
       Dir.mkdir(@base_weave_dir) if not File.exists?(@base_weave_dir)
       build_dir_structure(@filename, @base_weave_dir)

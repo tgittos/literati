@@ -1,5 +1,6 @@
-require 'lib/block'
-require 'lib/program'
+require 'literati/block'
+require 'literati/program'
+
 module Parser
   def self.state
     @@state

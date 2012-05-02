@@ -39,5 +39,5 @@ module Formatter
 end
 -
 
-== @lib/formatter/text.rb ==
+== @literati/lib/formatter/text.rb ==
 The module.

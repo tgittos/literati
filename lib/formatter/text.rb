@@ -9,7 +9,7 @@ module Formatter
       comment += statement.get_title + "\n" + ("-" * statement.get_title.length) + "\n"
       comment += statement.get_comments.join("\n")
   
-      if (not statement.has_flag?('no-code')) && !statement.get_code.nil?
+      unless (statement.has_flag?('no-code')) && statement.get_code != ""
         comment += "\n\nCode:\n\n" + statement.get_code.join("\n")
         comment += "\n"
       end
