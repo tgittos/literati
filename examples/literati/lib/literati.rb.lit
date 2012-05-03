@@ -53,6 +53,20 @@ The order you define sections doesn't matter, as there is a program
 description section at the end of every Literati document that 
 specifies the order the source code should be compiled.
 
+== Check for output ==
+The user can also specify whether they want to output to a specific directory
+rather than the default one.
+The format of this option is -o path/to/output and is specified after the
+command.
+-
+output_index = args.index '-o'
+if !output_index.nil?
+  output_dir = args.delete_at output_index+1
+  args.delete '-o'
+end
+files = args.dup
+-
+
 == Gather documents ==
 Check the arguments passed in. If no file is passed in,
 recursively gather a list of paths to tangle or weave.
@@ -87,7 +101,7 @@ input.each do |file|
   tokens = Parser::tokenize file
   program, statements = Parser::lex tokens
   statements = Parser::link statements
-  program.send(command.to_sym, statements)
+  program.send(command.to_sym, statements, output_dir)
 end
 -
 
@@ -98,7 +112,7 @@ commands and files passed in.
 -
 # sanity check on inputs
 if command.nil?
-  puts "Usage: literati.rb [tangle|weave] [input_file]"
+  puts "Usage: literati.rb [tangle|weave] [-o path/to/output] [input_file]"
   return
 end
 
@@ -133,9 +147,11 @@ Required files.
 
 class Literati
 
-  def self.process(command, files)
+  def self.process(command, args)
 
     Sanity check inputs.
+
+    Check for output.
 
     input = gather_paths(files)
     

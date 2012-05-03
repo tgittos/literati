@@ -5,22 +5,29 @@ require 'literati/linker'
 
 class Literati
 
-  def self.process(command, files)
+  def self.process(command, args)
 
     # sanity check on inputs
     if command.nil?
-      puts "Usage: literati.rb [tangle|weave] [input_file]"
+      puts "Usage: literati.rb [tangle|weave] [-o path/to/output] [input_file]"
       return
     end
-
+    
     # sanity check on command
     unless Parser::Program.method_defined? command
       puts "I don't know how to '#{command}'"
       return
     end
 
+    output_index = args.index '-o'
+    if !output_index.nil?
+      output_dir = args.delete_at output_index+1
+      args.delete '-o'
+    end
+    files = args.dup
+
     input = gather_paths(files)
-    # sanity check files
+
     if input.empty?
       puts "Couldn't find path/s '#{input.join(', ')}'. Are you sure it's correct?"
       return
@@ -32,7 +39,7 @@ class Literati
       tokens = Parser::tokenize file
       program, statements = Parser::lex tokens
       statements = Parser::link statements
-      program.send(command.to_sym, statements)
+      program.send(command.to_sym, statements, output_dir)
     end
 
   end

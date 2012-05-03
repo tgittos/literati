@@ -32,9 +32,10 @@ end
 -
 
 == Create output dir ==
-Create the output directory if it doesn't already exist
+Create the output directory if it doesn't already exist.
+If the path has been specified, don't create the base dir.
 -
-Dir.mkdir(@base_output_dir) if not File.exists?(@base_output_dir)
+Dir.mkdir(@base_output_dir) if !File.exists?(@base_output_dir) && path.nil?
 -
 
 == Weave ==
@@ -47,10 +48,12 @@ We can add custom formatters so that people can extend the Literati with a custo
 -
 def weave(statements, path = nil)
   require 'formatter/text' # this is hard coded, but should be passed in
+  output_path = @base_weave_dir
+  output_path = File.join(Dir.pwd, path) unless path.nil?
   Create output dir.
-  Dir.mkdir(@base_weave_dir) if not File.exists?(@base_weave_dir)
-  build_dir_structure(@filename, @base_weave_dir)
-  filename = File.join(@base_weave_dir, @filename.gsub(/\.rb/,''))
+  Dir.mkdir(output_path) if !File.exists?(output_path)
+  build_dir_structure(@filename, output_path)
+  filename = File.join(output_path, @filename.gsub(/\.rb/,''))
   comment = Formatter::format(statements)
   File.open("#{filename}.txt", 'w') {|f| f.write(comment) } unless comment.nil?
 end
@@ -95,10 +98,12 @@ holds a list of ordered literati block references, and slowly build the file to
 be written out. Then write out the file at the filename we converted earlier.
 -
 def tangle(statements, path = nil)
+  output_path = @base_tangle_dir
+  output_path = File.join(Dir.pwd, path) unless path.nil?
   Create output dir.
-  Dir.mkdir(@base_tangle_dir) if not File.exists?(@base_tangle_dir)
-  build_dir_structure(@filename, @base_tangle_dir)
-  filename = File.join(@base_tangle_dir, @filename)
+  Dir.mkdir(output_path) if !File.exists?(output_path)
+  build_dir_structure(@filename, output_path)
+  filename = File.join(output_path, @filename)
   buffer = []
   map = build_code_map(statements)
   @refs.each do |ref|
@@ -113,9 +118,9 @@ end
 == All ==
 Do both a weave and a tangle on the list of statements given.
 -
-def all(statements)
-  weave(statements)
-  tangle(statements)
+def all(statements, path = nil)
+  weave(statements, path)
+  tangle(statements, path)
 end
 -
 

@@ -13,19 +13,23 @@ module Parser
   
     def weave(statements, path = nil)
       require 'formatter/text' # this is hard coded, but should be passed in
-      Dir.mkdir(@base_output_dir) if not File.exists?(@base_output_dir)
-      Dir.mkdir(@base_weave_dir) if not File.exists?(@base_weave_dir)
-      build_dir_structure(@filename, @base_weave_dir)
-      filename = File.join(@base_weave_dir, @filename.gsub(/\.rb/,''))
+      output_path = @base_weave_dir
+      output_path = File.join(Dir.pwd, path) unless path.nil?
+      Dir.mkdir(@base_output_dir) if !File.exists?(@base_output_dir) && path.nil?
+      Dir.mkdir(output_path) if !File.exists?(output_path)
+      build_dir_structure(@filename, output_path)
+      filename = File.join(output_path, @filename.gsub(/\.rb/,''))
       comment = Formatter::format(statements)
       File.open("#{filename}.txt", 'w') {|f| f.write(comment) } unless comment.nil?
     end
   
     def tangle(statements, path = nil)
-      Dir.mkdir(@base_output_dir) if not File.exists?(@base_output_dir)
-      Dir.mkdir(@base_tangle_dir) if not File.exists?(@base_tangle_dir)
-      build_dir_structure(@filename, @base_tangle_dir)
-      filename = File.join(@base_tangle_dir, @filename)
+      output_path = @base_tangle_dir
+      output_path = File.join(Dir.pwd, path) unless path.nil?
+      Dir.mkdir(@base_output_dir) if !File.exists?(@base_output_dir) && path.nil?
+      Dir.mkdir(output_path) if !File.exists?(output_path)
+      build_dir_structure(@filename, output_path)
+      filename = File.join(output_path, @filename)
       buffer = []
       map = build_code_map(statements)
       @refs.each do |ref|
@@ -36,9 +40,9 @@ module Parser
       end
     end
   
-    def all(statements)
-      weave(statements)
-      tangle(statements)
+    def all(statements, path = nil)
+      weave(statements, path)
+      tangle(statements, path)
     end
   
     private

@@ -1,0 +1,17 @@
+== Hello world ==
+This is a sample of hello world, to see if I can integrate
+Literati into another build system
+
+== The test ==
+This is the test code
+-
+#include <iostream>
+int main()
+{
+  std::cout << "Hello, world!" << std::endl;
+  return 0;
+}
+-
+
+== @helloworld.cpp ==
+The test.
