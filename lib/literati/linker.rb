@@ -1,6 +1,16 @@
 module Parser
 
-  def self.link(statements)
+  def self.link(program, statements)
+    if program.has_flag?('inherit')
+      path = program.flag_value('inherit')
+      path = File.join(File.dirname(program.source), path)
+      file = Literati.gather_paths([path]).first
+      inherited_tokens = Parser::tokenize file
+      inherited_program, inherited_statements = Parser::lex inherited_tokens
+      inherited_statements = Parser::link inherited_program, inherited_statements
+      statements_to_skip = inherited_statements.map{|s| s.get_title} & statements.map{|s| s.get_title}
+      inherited_statements.each{|s| statements << s unless statements_to_skip.include?(s.get_title)}
+    end
     code_map = {}
     statements.each do |statement|
       next if !(statement.respond_to?(:get_code) && statement.respond_to?(:get_title))

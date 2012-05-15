@@ -74,12 +74,17 @@ end
 
 == Check if line is program definition ==
 Check if the line defines a program. If it does, we need to create the program with
-the remaining tokens and then return to the linker. Each line of the program definition
-is a reference, which is taken care of by the linker.
+the remaining tokens and then return to the linker. 
+Search the program definition for program level metadata, and pass that to the
+constructor. Each other line of the program definition is a reference, which is 
+taken care of by the linker.
 @code
 -
 if line_is_program_definition?(token)
-  program = Program.new tokens.slice(i, tokens.count - i).reject{|t| t.strip.length == 0}
+  tokens = tokens.slice(i, tokens.count - i).reject{|t| t.strip.length == 0}
+  metadata = tokens.select{|t| t =~ /^@/}.map{|t| t.gsub(/@/, '')}
+  tokens.reject!{|t| t=~ /^@/}
+  program = Program.new tokens, metadata
   break
 end
 -

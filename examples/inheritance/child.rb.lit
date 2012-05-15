@@ -1,0 +1,15 @@
+== Child file ==
+This is a demo of the inheritance feature of Literati.
+This is the child, and it will override the Goodbye
+literati block only.
+
+== Goodbye ==
+-
+puts "Goodbye from the child"
+-
+
+== @inheritance/child.rb ==
+@inherit parent.rb.lit
+Shebang.
+Hello.
+Goodbye.

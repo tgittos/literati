@@ -38,13 +38,12 @@ class Literati
     input.each do |file|
       tokens = Parser::tokenize file
       program, statements = Parser::lex tokens
-      statements = Parser::link statements
+      program.source = file
+      statements = Parser::link program, statements
       program.send(command.to_sym, statements, output_dir)
     end
 
   end
-
-  private
 
   def self.gather_paths(files)
     input_files = []

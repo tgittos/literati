@@ -1,7 +1,10 @@
 module Parser
   class Program
   
-    def initialize(lines)
+    attr_accessor :source
+  
+    def initialize(lines, metadata = [])
+      @flags = metadata
       @refs = []
       convert_title_to_filename lines.first
       lines.shift
@@ -43,6 +46,17 @@ module Parser
     def all(statements, path = nil)
       weave(statements, path)
       tangle(statements, path)
+    end
+  
+    def has_flag?(flag)
+      return false if @flags.nil?
+      return @flags.select{|f| f =~ /^#{flag}/}.length == 1
+    end
+  
+    def flag_value(flag)
+      @flags.each do |f|
+        return f.split(' ').last.strip if f =~ /^#{flag}/
+      end
     end
   
     private

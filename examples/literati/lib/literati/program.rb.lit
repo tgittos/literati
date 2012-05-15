@@ -14,13 +14,15 @@ end
 -
 
 == Initialize ==
-Take an array of lines that form a program definition.
+Take an array of lines that form a program definition, and an array of metadata
+attributes.
 The first line will be the filename, so convert that first.
 Then copy all lines to an instance variable.
 Set up a base output directory, currently hardcoded to 'output', then set up sub directories
 for source ('src') and documentation ('doc')
 -
-def initialize(lines)
+def initialize(lines, metadata = [])
+  @flags = metadata
   @refs = []
   convert_title_to_filename lines.first
   lines.shift
@@ -28,6 +30,28 @@ def initialize(lines)
   @base_output_dir = File.join(Dir.pwd, 'output')
   @base_tangle_dir = File.join(@base_output_dir, 'src')
   @base_weave_dir = File.join(@base_output_dir, 'doc')
+end
+-
+
+== Has flag ==
+Flags can be set in documentation, and get passed straight to the formatter.
+The formatter then decides how best to handle the flag, and what flags it handles.
+So therefore, there needs to be a generic way of handling flags.
+-
+def has_flag?(flag)
+  return false if @flags.nil?
+  return @flags.select{|f| f =~ /^#{flag}/}.length == 1
+end
+-
+
+== Flag value ==
+Some flags set in documentation can have values, which the formatters can read.
+There needs to be a method to get the value of a flag.
+-
+def flag_value(flag)
+  @flags.each do |f|
+    return f.split(' ').last.strip if f =~ /^#{flag}/
+  end
 end
 -
 
@@ -124,9 +148,18 @@ def all(statements, path = nil)
 end
 -
 
+== Source location ==
+We need a way to get the location of the source file when inheriting
+to find the inherited file. This provides access to that variable.
+-
+attr_accessor :source
+-
+
 == The class ==
 -
 class Program
+
+  Source location.
 
   Initialize.
 
@@ -135,6 +168,10 @@ class Program
   Tangle.
 
   All.
+
+  Has flag.
+
+  Flag value.
 
   private
 

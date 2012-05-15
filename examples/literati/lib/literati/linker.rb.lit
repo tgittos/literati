@@ -4,19 +4,39 @@ for substituting literati references with the code segments that are being refer
 
 == Link ==
 -
-def self.link(statements)
+def self.link(program, statements)
+  Inherit if needed.
   Build code map.
   Link statements.
   statements
 end
 -
 
-== Build code map ==
+== Building the code map ==
 In order to link the literati program together, we need to create a dictionary of
 code chunks, indexed by their names.
-We use duck-typing to ignore malformed code blocks that aren't the right type.
-We really shouldn't be getting them, so maybe this can be removed.
-TODO: Determine if we need the duck-type check.
+Usually we start from a blank map, however if the generated program inherits from another
+program, then we start from a set of known statements, and override those that have
+been respecified.
+
+== Inherit if needed ==
+If we need to inherit, first load the file we're inheriting from and build a code
+map of the file.
+-
+if program.has_flag?('inherit')
+  path = program.flag_value('inherit')
+  path = File.join(File.dirname(program.source), path)
+  file = Literati.gather_paths([path]).first
+  inherited_tokens = Parser::tokenize file
+  inherited_program, inherited_statements = Parser::lex inherited_tokens
+  inherited_statements = Parser::link inherited_program, inherited_statements
+  statements_to_skip = inherited_statements.map{|s| s.get_title} & statements.map{|s| s.get_title}
+  inherited_statements.each{|s| statements << s unless statements_to_skip.include?(s.get_title)}
+end
+-
+
+== Build code map ==
+Builds a map of the code, with each code block the key, and the source as the value.
 -
 code_map = {}
 statements.each do |statement|
@@ -29,7 +49,7 @@ end
 Go through each literati block (henceforth referred to as a statement) and get
 the code for it. Then link the code for this block. Ignore statements that have
 no code (as they don't need to be linked)
-TODO: Determine if we need the duc-type check.
+TODO: Determine if we need the duck-type check.
 -
 statements.each do |statement|
   next if !(statement.respond_to?(:get_code) && statement.respond_to?(:get_title)) || statement.get_code.nil?

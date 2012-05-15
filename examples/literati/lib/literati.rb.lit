@@ -100,7 +100,8 @@ some source code.
 input.each do |file|
   tokens = Parser::tokenize file
   program, statements = Parser::lex tokens
-  statements = Parser::link statements
+  program.source = file
+  statements = Parser::link program, statements
   program.send(command.to_sym, statements, output_dir)
 end
 -
@@ -162,8 +163,6 @@ class Literati
     Process documents.
 
   end
-
-  private
 
   Gather documents.
 

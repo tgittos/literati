@@ -1,4 +1,5 @@
 *.sublime-project
+build
 *.DS_Store
 output/*
 .rbenv-version

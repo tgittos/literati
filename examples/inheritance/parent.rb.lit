@@ -1,0 +1,25 @@
+== Parent file ==
+This is a demo of the inheritance feature of Literati.
+This parent file defines two literati blocks, which each output 
+to the terminal. The child file is going to inherit this file, 
+and override one of the literati blocks.
+
+== Hello ==
+-
+puts "Hello from the parent"
+-
+
+== Goodbye ==
+-
+puts "Goodbye from the parent"
+-
+
+== Shebang ==
+-
+#! /usr/bin/env ruby
+-
+
+== @inheritance/parent.rb ==
+Shebang.
+Hello.
+Goodbye.

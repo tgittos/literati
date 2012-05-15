@@ -43,7 +43,18 @@ So therefore, there needs to be a generic way of handling flags.
 -
 def has_flag?(flag)
   return false if @flags.nil?
-  @flags.include?(flag)
+  return @flags.select{|f| f =~ /^#{flag}/}.length == 1
+end
+-
+
+== Flag value ==
+Some flags set in documentation can have values, which the formatters can read.
+There needs to be a method to get the value of a flag.
+-
+def flag_value(flag)
+  @flags.each do |f|
+    return flag.split(' ').last.strip if f =~ /^#{flag}/
+  end
 end
 -
 
