@@ -4,6 +4,7 @@ This is the child, and it will override the Goodbye
 literati block only.
 
 == Goodbye ==
+Print goodbye, only better
 -
 puts "Goodbye from the child"
 -

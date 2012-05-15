@@ -1,6 +1,8 @@
 module Parser
   class Block
   
+    attr_accessor :inherited
+  
     def initialize(title)
       @title = title.gsub(/\=/, '').strip
     end

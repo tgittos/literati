@@ -105,6 +105,13 @@ def parse_metadata(data)
 end
 -
 
+== Inherited ==
+Documentation will skip over statements that have been inherited, so we
+need to be able to track that attribute
+-
+attr_accessor :inherited
+-
+
 == The module ==
 -
 module Parser
@@ -115,6 +122,8 @@ end
 == The class ==
 -
 class Block
+
+  Inherited.
 
   Constructor.
 

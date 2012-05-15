@@ -5,11 +5,13 @@ to the terminal. The child file is going to inherit this file,
 and override one of the literati blocks.
 
 == Hello ==
+Print hello
 -
 puts "Hello from the parent"
 -
 
 == Goodbye ==
+Print goodbye
 -
 puts "Goodbye from the parent"
 -

@@ -8,8 +8,8 @@ module Parser
       inherited_tokens = Parser::tokenize file
       inherited_program, inherited_statements = Parser::lex inherited_tokens
       inherited_statements = Parser::link inherited_program, inherited_statements
-      statements_to_skip = inherited_statements.map{|s| s.get_title} & statements.map{|s| s.get_title}
-      inherited_statements.each{|s| statements << s unless statements_to_skip.include?(s.get_title)}
+      statements_to_skip = inherited_statements.select{|s| s.get_code.nil?}.map{|s| s.get_title} | (inherited_statements.map{|s| s.get_title} & statements.map{|s| s.get_title})
+      inherited_statements.each{|s| s.inherited = true; statements << s unless statements_to_skip.include?(s.get_title)}
     end
     code_map = {}
     statements.each do |statement|
