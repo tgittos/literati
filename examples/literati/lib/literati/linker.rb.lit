@@ -20,17 +20,36 @@ program, then we start from a set of known statements, and override those that h
 been respecified.
 
 == Inherit if needed ==
-If we need to inherit, first load the file we're inheriting from and build a code
-map of the file.
+If we need to inherit, 
 -
 if program.has_flag?('inherit')
+  inherit(program, statements)
+end
+-
+
+== Inherit ==
+Load the file we're inheriting from and build a code
+map of the file.
+Supports nested inheritance via recursion
+This method doesn't return anything, it modifies the statements parameter
+This is probably not the best, as we want to be as functional as possible.
+-
+def self.inherit(program, statements)
+  # pull in inherited statements
   path = program.flag_value('inherit')
+  puts "file #{program.source} inherits from #{path}"
   path = File.join(File.dirname(program.source), path)
   file = Literati.gather_paths([path]).first
   inherited_tokens = Parser::tokenize file
   inherited_program, inherited_statements = Parser::lex inherited_tokens
   statements_to_skip = inherited_statements.select{|s| s.get_code.nil?}.map{|s| s.get_title} | (inherited_statements.map{|s| s.get_title} & statements.map{|s| s.get_title})
   inherited_statements.each{|s| s.inherited = true; statements << s unless statements_to_skip.include?(s.get_title)}
+  # now we have statements from the original file, and the inherited file, with no overlap
+  # now, repeat if we need to inherit again
+  if inherited_program.has_flag?('inherit')
+    inherited_program.source = file
+    inherit(inherited_program, statements)
+  end
 end
 -
 
@@ -85,6 +104,10 @@ end
 module Parser
 
   Link.
+
+  private
+
+  Inherit.
   
 end
 -

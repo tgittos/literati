@@ -36,7 +36,9 @@ module Parser
       buffer = []
       map = build_code_map(statements)
       @refs.each do |ref|
-        buffer.concat map[ref.gsub('.', '').strip].get_code
+        section = map[ref.gsub('.', '').strip]
+        raise "Cannot find reference #{ref} in #{source}" if section.nil?
+        buffer.concat section.get_code
       end
       File.open(filename, 'w') do |file|
         buffer.each { |line| file.write("#{line}\n") }
