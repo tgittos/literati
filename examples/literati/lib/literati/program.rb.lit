@@ -69,6 +69,8 @@ code that a computer can execute.
 Right now we hard code the formatter, however that could be a metadata field, the and we can
 allow the user to just compile HTML doc, or textile doc, or whatever.
 We can add custom formatters so that people can extend the Literati with a custom formatting.
+If the generated file is newer than the literati file, don't replace
+the source file, it's unnecessary work.
 -
 def weave(statements, path = nil)
   require 'formatter/text' # this is hard coded, but should be passed in
@@ -135,9 +137,23 @@ def tangle(statements, path = nil)
     raise "Cannot find reference #{ref} in #{source}" if section.nil?
     buffer.concat section.get_code
   end
+  if not_changed? source, filename
+    puts "#{source} unchanged, skipping"
+    return
+  end
   File.open(filename, 'w') do |file|
     buffer.each { |line| file.write("#{line}\n") }
   end
+end
+-
+
+== Test if input is newer than output ==
+If the input literati file is newer than the output file, then we want to write
+the output file. Otherwise, there's no point in writing the output file, and it
+may interfere if we're using Literati with another language, like C++ and automake.
+-
+def not_changed?(input, output)
+  File.mtime(output) > File.mtime(input) if File.exists? output
 end
 -
 
@@ -182,6 +198,8 @@ class Program
   Build code map.
 
   Build directory structure.
+
+  Test if input is newer than output.
   
 end
 -

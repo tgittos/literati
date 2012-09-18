@@ -40,6 +40,10 @@ module Parser
         raise "Cannot find reference #{ref} in #{source}" if section.nil?
         buffer.concat section.get_code
       end
+      if not_changed? source, filename
+        puts "#{source} unchanged, skipping"
+        return
+      end
       File.open(filename, 'w') do |file|
         buffer.each { |line| file.write("#{line}\n") }
       end
@@ -86,6 +90,10 @@ module Parser
         Dir.mkdir(path) unless File.exists?(path)
         current_path = File.join(current_path, dir)
       end
+    end
+  
+    def not_changed?(input, output)
+      File.mtime(output) > File.mtime(input) if File.exists? output
     end
   
   end
