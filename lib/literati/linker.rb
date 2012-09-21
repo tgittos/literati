@@ -20,7 +20,7 @@ module Parser
             indent = 0
             line.each_char{|c| if c == ' ' then indent += 1 else break end }
             code.delete_at i
-            replacement.get_code.reverse.each do |replacement_line|
+            (replacement.get_code || []).reverse.each do |replacement_line|
               code.insert(i, (" " * indent) << replacement_line)
             end
           end
