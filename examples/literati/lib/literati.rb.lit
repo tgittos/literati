@@ -8,7 +8,7 @@ While programs are executed by computers, we write them mostly
 for the benefit of other programmers, hence the proliferation of
 high level languages such as Ruby and Python.
 
-Literate programming is an attempt to solve this problem by 
+Literate programming is an attempt to solve this problem by
 tightly coupling the code to the documentation, and to help
 programmers write clearer programs for each other first, and for
 computers second.
@@ -36,7 +36,7 @@ documentation is generated
 
 == Weave ==
 Weaving will parse the Literati source and will create documentation
-from it. 
+from it.
 By default, it will tangle every .lit file it can find in the current
 directory recursively.
 Alternatively, you can give it a filename and it will weave just that
@@ -50,7 +50,7 @@ Tangling will parse the Literati source and will create a source code
 from it. Literati is language agnostic, and will attempt to preserve
 whitespace. Code blocks must follow a documentation block.
 The order you define sections doesn't matter, as there is a program
-description section at the end of every Literati document that 
+description section at the end of every Literati document that
 specifies the order the source code should be compiled.
 
 == Check for output ==
@@ -65,6 +65,16 @@ if !output_index.nil?
   args.delete '-o'
 end
 files = args.dup
+-
+
+== Check for flags ==
+Set the mode of operation of literati by checking flags passed.
+Here is the following set of flags currently supported:
+-v verbose: outputs what literati is doing
+-
+if args.delete '-v'
+  @verbose = true
+end
 -
 
 == Gather documents ==
@@ -102,7 +112,7 @@ input.each do |file|
   program, statements = Parser::lex tokens
   program.source = file
   statements = Parser::link program, statements
-  program.send(command.to_sym, statements, output_dir)
+  program.send(command.to_sym, statements, output_dir, {:verbose => !!@verbose })
 end
 -
 
@@ -154,11 +164,13 @@ class Literati
 
     Check for output.
 
+    Check for flags.
+
     input = gather_paths(files)
-    
+
     Sanity check files.
 
-    puts "#{command.chop}ing:\n#{input.join("\n")}"
+    puts "#{command.chop}ing:\n#{input.join("\n")}" if @verbose
 
     Process documents.
 

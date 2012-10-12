@@ -14,7 +14,7 @@ module Parser
       @base_weave_dir = File.join(@base_output_dir, 'doc')
     end
   
-    def weave(statements, path = nil)
+    def weave(statements, path = nil, options = {})
       require 'formatter/text' # this is hard coded, but should be passed in
       output_path = @base_weave_dir
       output_path = File.join(Dir.pwd, path) unless path.nil?
@@ -26,7 +26,7 @@ module Parser
       File.open("#{filename}.txt", 'w') {|f| f.write(comment) } unless comment.nil?
     end
   
-    def tangle(statements, path = nil)
+    def tangle(statements, path = nil, options = {})
       output_path = @base_tangle_dir
       output_path = File.join(Dir.pwd, path) unless path.nil?
       Dir.mkdir(@base_output_dir) if !File.exists?(@base_output_dir) && path.nil?
@@ -41,7 +41,7 @@ module Parser
         buffer.concat section.get_code
       end
       if not_changed? source, filename
-        puts "#{source} unchanged, skipping"
+        puts "#{source} unchanged, skipping" if options[:verbose]
         return
       end
       File.open(filename, 'w') do |file|

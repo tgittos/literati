@@ -26,6 +26,10 @@ class Literati
     end
     files = args.dup
 
+    if args.delete '-v'
+      @verbose = true
+    end
+
     input = gather_paths(files)
 
     if input.empty?
@@ -33,14 +37,14 @@ class Literati
       return
     end
 
-    puts "#{command.chop}ing:\n#{input.join("\n")}"
+    puts "#{command.chop}ing:\n#{input.join("\n")}" if @verbose
 
     input.each do |file|
       tokens = Parser::tokenize file
       program, statements = Parser::lex tokens
       program.source = file
       statements = Parser::link program, statements
-      program.send(command.to_sym, statements, output_dir)
+      program.send(command.to_sym, statements, output_dir, {:verbose => !!@verbose })
     end
 
   end

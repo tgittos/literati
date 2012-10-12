@@ -72,7 +72,7 @@ We can add custom formatters so that people can extend the Literati with a custo
 If the generated file is newer than the literati file, don't replace
 the source file, it's unnecessary work.
 -
-def weave(statements, path = nil)
+def weave(statements, path = nil, options = {})
   require 'formatter/text' # this is hard coded, but should be passed in
   output_path = @base_weave_dir
   output_path = File.join(Dir.pwd, path) unless path.nil?
@@ -123,7 +123,7 @@ Build a code map from a list of statements given. Then take the @refs global tha
 holds a list of ordered literati block references, and slowly build the file to
 be written out. Then write out the file at the filename we converted earlier.
 -
-def tangle(statements, path = nil)
+def tangle(statements, path = nil, options = {})
   output_path = @base_tangle_dir
   output_path = File.join(Dir.pwd, path) unless path.nil?
   Create output dir.
@@ -138,7 +138,7 @@ def tangle(statements, path = nil)
     buffer.concat section.get_code
   end
   if not_changed? source, filename
-    puts "#{source} unchanged, skipping"
+    puts "#{source} unchanged, skipping" if options[:verbose]
     return
   end
   File.open(filename, 'w') do |file|
